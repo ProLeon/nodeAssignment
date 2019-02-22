@@ -23,7 +23,7 @@ if(arg1 === "spotify-this-song"){
     id: keys.spotify.id,
     secret: keys.spotify.secret
     });
-    
+
     spotify
         .search({ type: 'track', query: songName })
     .then(function(data) {
@@ -43,7 +43,7 @@ if(arg1 === "spotify-this-song"){
         console.log("--------Album name--------")
         console.log("==========================")
         console.log(data.tracks.items[0].album.name);
-        
+        if(arg2 === undefined)console.log("Liribot has searched for the song undefined, if this wasn't intentional: \nYou are missing a second input after spotify-this-song, try 'node liri.js spotify-this-song <song name>'")
         
     })
     .catch(function(err) {
@@ -59,19 +59,23 @@ if(arg1 === "spotify-this-song"){
         band += process.argv[i];
         i++
     }
-    axios.get("https://rest.bandsintown.com/artists/" + band + "/events?app_id=codingbootcamp").then(
-        function(response) {
-            let concertNum = 1;
-            for(j = 0; j < response.data.length; j++){
-                
-                console.log(">>>>>>>CONCERT " + concertNum + "/" + response.data.length + "<<<<<<<")
-                console.log("Venue Name: " + response.data[j].venue.name);
-                console.log("Location: " + response.data[j].venue.city + ", " + response.data[0].venue.country);
-                console.log("Date: " +  moment(response.data[j].datetime).format("MM/DD/YYYY"));
-                console.log("=======================")
-                concertNum++
-            }
-        });
+    if(arg2 !== undefined){
+        axios.get("https://rest.bandsintown.com/artists/" + band + "/events?app_id=codingbootcamp").then(
+            function(response) {
+                let concertNum = 1;
+                for(j = 0; j < response.data.length; j++){
+                    
+                    console.log(">>>>>>>CONCERT " + concertNum + "/" + response.data.length + "<<<<<<<")
+                    console.log("Venue Name: " + response.data[j].venue.name);
+                    console.log("Location: " + response.data[j].venue.city + ", " + response.data[0].venue.country);
+                    console.log("Date: " +  moment(response.data[j].datetime).format("MM/DD/YYYY"));
+                    console.log("=======================")
+                    concertNum++
+                }
+            });
+    }else{
+        console.log("You are missing a second input after concert-this, try 'node liri.js concert-this <Band/Artists Name>'")
+    }
 }else if(arg1 === "movie-this"){
     //check if user inputs a movie with more than one word
     let movie = "";
@@ -82,39 +86,49 @@ if(arg1 === "spotify-this-song"){
         movie += process.argv[i];
         i++
     }
-    axios.get("http://www.omdbapi.com/?t=" + movie + " &y=&plot=short&apikey=trilogy").then(
-        function(response) {
-            console.log("-------------------Title of the movie-------------------------")
-            console.log("==============================================================")
-            console.log(response.data.Title);
-            console.log("______________________________________________________________")
-            console.log("-----------------Year the movie came out----------------------")
-            console.log("==============================================================")
-            console.log(response.data.Year);
-            console.log("______________________________________________________________")
-            console.log("-----------------IMDB Rating of the movie---------------------")
-            console.log("==============================================================")
-            console.log(response.data.imdbRating);
-            console.log("______________________________________________________________")
-            console.log("-----------Rotten Tomatoes Rating of the movie----------------")
-            console.log("==============================================================")
-            console.log(response.data.Ratings[1].Value);
-            console.log("______________________________________________________________")
-            console.log("----------Country where the movie was produced----------------")
-            console.log("==============================================================")
-            console.log(response.data.Country);
-            console.log("______________________________________________________________")
-            console.log("------------------Language of the movie-----------------------")
-            console.log("==============================================================")
-            console.log(response.data.Language);
-            console.log("______________________________________________________________")
-            console.log("--------------------Plot of the movie-------------------------")
-            console.log("==============================================================")
-            console.log(response.data.Plot);
-            console.log("______________________________________________________________")
-            console.log("-------------------Actors in the movie------------------------")
-            console.log("==============================================================")
-            console.log(response.data.Actors);
-            console.log("______________________________________________________________")
-        });
+    if(arg2 !== undefined){
+        axios.get("http://www.omdbapi.com/?t=" + movie + " &y=&plot=short&apikey=trilogy").then(
+            function(response) {
+                console.log("-------------------Title of the movie-------------------------")
+                console.log("==============================================================")
+                console.log(response.data.Title);
+                console.log("______________________________________________________________")
+                console.log("-----------------Year the movie came out----------------------")
+                console.log("==============================================================")
+                console.log(response.data.Year);
+                console.log("______________________________________________________________")
+                console.log("-----------------IMDB Rating of the movie---------------------")
+                console.log("==============================================================")
+                console.log(response.data.imdbRating);
+                console.log("______________________________________________________________")
+                console.log("-----------Rotten Tomatoes Rating of the movie----------------")
+                console.log("==============================================================")
+                console.log(response.data.Ratings[1].Value);
+                console.log("______________________________________________________________")
+                console.log("----------Country where the movie was produced----------------")
+                console.log("==============================================================")
+                console.log(response.data.Country);
+                console.log("______________________________________________________________")
+                console.log("------------------Language of the movie-----------------------")
+                console.log("==============================================================")
+                console.log(response.data.Language);
+                console.log("______________________________________________________________")
+                console.log("--------------------Plot of the movie-------------------------")
+                console.log("==============================================================")
+                console.log(response.data.Plot);
+                console.log("______________________________________________________________")
+                console.log("-------------------Actors in the movie------------------------")
+                console.log("==============================================================")
+                console.log(response.data.Actors);
+                console.log("______________________________________________________________")
+            });
+    }else{
+        console.log("You are missing a second input after movie-this, try 'node liri.js movie-this <movie name>'")
+    }
+}else if(arg1 === undefined){
+    console.log("You haven't inputed any commands type 'node liri.js help' for a list of commands")
+}else{
+    console.log("'node liri.js spotify-this-song <song name>' - Searches for song you input and displays it's info");
+    console.log("'node liri.js concert-this <band/artist name>' - Searches for band you input and displays any upcoming concerts and it's info");
+    console.log("'node liri.js movie-this <movie name>' - Searches for movie you input and displays it's info");   
 }
